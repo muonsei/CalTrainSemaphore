@@ -5,6 +5,7 @@ public class Passenger extends Thread {
 	private final Station destinationStation;
 	private Train currentlyRiding;
 	public static int passengersSpawned = 0; // for passengerNo purposes
+	private boolean departing;
 	
 	public Passenger(Station source, Station destination) {
 		passengersSpawned++;
@@ -50,10 +51,10 @@ public class Passenger extends Thread {
 		}
 	}
 	
-	public synchronized void depart() {
-		System.out.println("Called Passenger.depart()");
+	public void depart() {
 		while(currentlyRiding.getCurrentStation() != destinationStation);
-		while(!currentlyRiding.getCurrentStation().getDoorsOpened());
+		departing = true;
+		System.out.println("Called Passenger.depart()");
 		currentlyRiding.getSeats().release();
 		currentlyRiding.passengerDepartsFromTrain(this);
 		System.out.println("Passenger " + passengerNo + 
@@ -89,5 +90,9 @@ public class Passenger extends Thread {
 
 	public Train getCurrentlyRiding() {
 		return currentlyRiding;
+	}
+	
+	public boolean isDeparting() {
+		return departing;
 	}
 }

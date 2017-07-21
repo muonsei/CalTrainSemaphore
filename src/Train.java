@@ -19,12 +19,6 @@ public class Train extends Thread {
 			" in Station " + sourceStation.getStationNo());
 	}
 	
-	public void departStation() {
-		System.out.println("Called Train.departStation()");
-		currentStation.getLoadingSpot().release();
-		currentStation = currentStation.getNextStation();
-	}
-	
 	/*--------------------------------------
 	 *	            RUN THREAD 
 	 *--------------------------------------*/
@@ -32,10 +26,8 @@ public class Train extends Thread {
 	public void run()
 	{
 		while(true){
-			if (currentStation.loadTrain(this)) {
-				System.out.println("Station.loadTrain() returned true.");
-				departStation();
-			}
+			currentStation.loadTrain(this);
+			currentStation.departTrain(this);
 		}
 	}
 	
@@ -79,5 +71,14 @@ public class Train extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean passengerWantsToDepart() {
+		for (int x = 0; x < passengersOnTrain.size(); x++) {
+			if (passengersOnTrain.get(x).isDeparting())
+				return true;
+		}
+		
+		return false;
 	}
 }

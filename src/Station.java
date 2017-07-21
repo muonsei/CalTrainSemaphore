@@ -35,7 +35,7 @@ public class Station {
 		loadTrain(new Train(capacity, this));
 	}
 	
-	public synchronized boolean loadTrain(Train t) {
+	public void loadTrain(Train t) {
 		
 		/* The function must not return until the train is 
 		 * satisfactorily loaded (all passengers are in their
@@ -48,14 +48,19 @@ public class Station {
 			doorsOpened = true;
 			System.out.println("Loading Train " + t.getTrainNo() + 
 				" in Station " + stationNo);
-			while (passengersWaiting.isEmpty() == false && t.getSeats().availablePermits() > 0);
+			while (passengersWaiting.isEmpty() == false && t.getSeats().availablePermits() > 0 && t.passengerWantsToDepart());
 			System.out.println("Train " + currentlyLoading.getTrainNo() + 
 					" in Station " + getStationNo() + " finished loading.");
-			doorsOpened = false;
-			return true;
 		} catch (Exception e) {
-			return false;
+			e.printStackTrace();
 		}
+	}
+	
+	public void departTrain(Train t) {
+		System.out.println("Called Station.departStation()");
+		loadingSpot.release();
+		nextStation.loadTrain(t);
+		setCurrentlyLoading(null);
 	}
 	
 	/*--------------------------------------
