@@ -8,6 +8,7 @@ public class Station {
 	private Train currentlyLoading;
 	private ArrayList<Passenger> passengersWaiting;
 	public static int stationsSpawned = 0; // for stationNo purposes
+	private boolean doorsOpened;
 	
 	public Station() {
 		stationsSpawned++;
@@ -17,6 +18,7 @@ public class Station {
 		nextStation = null;
 		System.out.println("Spawned Station " + stationNo + ".");
 		passengersWaiting = new ArrayList<Passenger>();
+		doorsOpened = false;
 	}
 	
 	/*--------------------------------------
@@ -24,36 +26,36 @@ public class Station {
 	 *--------------------------------------*/
 	
 	public void spawnPassenger(Station destination) {
+		System.out.println("Called Station.spawnPassenger()");
 		passengersWaiting.add(new Passenger(this, destination));
 	}
 	
 	public void spawnTrain(int capacity) {
-		receiveTrain(new Train(capacity, this));
+		System.out.println("Called Station.spawnTrain()");
+		loadTrain(new Train(capacity, this));
 	}
 	
-	public void receiveTrain(Train t) {
-		try {
-			loadingSpot.acquire();
-			setCurrentlyLoading(t);
-			System.out.println("Received Train " + t.getTrainNo() + 
-				" in Station " + stationNo);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public void loadTrain() {
+	public synchronized boolean loadTrain(Train t) {
 		
 		/* The function must not return until the train is 
 		 * satisfactorily loaded (all passengers are in their
 		 * seats, and either the train is full or all waiting
 		 * passengers have boarded).
 		 */
-		System.out.println("Entered loadTrain() method");
-		while ((currentlyLoading.getSeats().availablePermits() > 0) || (!passengersWaiting.isEmpty()));
-		System.out.println("Train " + currentlyLoading.getTrainNo() + 
-			" in Station " + getStationNo() + " finished loading.");
+		try {
+			loadingSpot.acquire();
+			setCurrentlyLoading(t);
+			doorsOpened = true;
+			System.out.println("Loading Train " + t.getTrainNo() + 
+				" in Station " + stationNo);
+			while (passengersWaiting.isEmpty() == false && t.getSeats().availablePermits() > 0);
+			System.out.println("Train " + currentlyLoading.getTrainNo() + 
+					" in Station " + getStationNo() + " finished loading.");
+			doorsOpened = false;
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	/*--------------------------------------
@@ -86,5 +88,9 @@ public class Station {
 	
 	public ArrayList<Passenger> getPassengersWaiting() {
 		return passengersWaiting;
+	}
+	
+	public boolean getDoorsOpened() {
+		return doorsOpened;
 	}
 }

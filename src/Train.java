@@ -19,16 +19,10 @@ public class Train extends Thread {
 			" in Station " + sourceStation.getStationNo());
 	}
 	
-	public void enterStation(Station s) {
-		// try papasok ng train sa loading part ng station
-		currentStation = s;
-		currentStation.receiveTrain(this);
-		currentStation.setCurrentlyLoading(this);
-	}
-	
 	public void departStation() {
+		System.out.println("Called Train.departStation()");
 		currentStation.getLoadingSpot().release();
-		currentStation.getNextStation().receiveTrain(this);
+		currentStation = currentStation.getNextStation();
 	}
 	
 	/*--------------------------------------
@@ -37,9 +31,12 @@ public class Train extends Thread {
 	
 	public void run()
 	{
-		currentStation.receiveTrain(this);
-		currentStation.loadTrain();
-		departStation();
+		while(true){
+			if (currentStation.loadTrain(this)) {
+				System.out.println("Station.loadTrain() returned true.");
+				departStation();
+			}
+		}
 	}
 	
 	/*--------------------------------------
@@ -63,6 +60,8 @@ public class Train extends Thread {
 	}
 	
 	public void passengerRidesTrain(Passenger p){
+		System.out.println("Called Train.passengerRidesTrain()");
+		
 		try {
 			currentStation.getPassengersWaiting().remove(p);
 			passengersOnTrain.add(p);
@@ -73,6 +72,8 @@ public class Train extends Thread {
 	}
 	
 	public void passengerDepartsFromTrain(Passenger p) {
+		System.out.println("Called Train.passengerDepartsFromTrain()");
+		
 		try {
 			passengersOnTrain.remove(p);
 		} catch (Exception e) {

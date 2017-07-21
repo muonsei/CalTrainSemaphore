@@ -33,10 +33,10 @@ public class Main {
 					System.out.print("Enter # of passengers: ");
 					passengerCount = sc.nextInt();
 					// Enter station to spawn
-					System.out.print("Which station (1-8) would you like to spawn them?");
+					System.out.print("Which station (1-8) would you like to spawn them? ");
 					passengerSpawn = sc.nextInt();
 					if (passengerSpawn >= 1 && passengerSpawn <= 8) { // within bounds
-						System.out.print("Which station (1-8) would you like to drop them off?");
+						System.out.print("Which station (1-8) would you like to drop them off? ");
 						passengerDropOff = sc.nextInt();
 						if (passengerSpawn >= 1 && passengerSpawn <= 8) { // within bounds
 							while (passengerCount > 0) {
@@ -62,7 +62,7 @@ public class Main {
 					System.out.println("!!! Exiting... !!!");
 					break;
 				default:
-					System.out.println("Invalid choice. Doing nothing...");
+					System.out.println("!!! Invalid choice. Doing nothing... !!!");
 			}
 		} while (choice != 3);
 		

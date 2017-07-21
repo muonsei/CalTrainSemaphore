@@ -36,6 +36,7 @@ public class Passenger extends Thread {
 	
 	public void onBoard() {
 		try {
+			System.out.println("Called Passenger.onBoard()");
 			sourceStation.getCurrentlyLoading().getSeats().acquire(); // try to sit in train
 			currentlyRiding = sourceStation.getCurrentlyLoading();
 			currentlyRiding.passengerRidesTrain(this);
@@ -49,8 +50,10 @@ public class Passenger extends Thread {
 		}
 	}
 	
-	public void depart() {
+	public synchronized void depart() {
+		System.out.println("Called Passenger.depart()");
 		while(currentlyRiding.getCurrentStation() != destinationStation);
+		while(!currentlyRiding.getCurrentStation().getDoorsOpened());
 		currentlyRiding.getSeats().release();
 		currentlyRiding.passengerDepartsFromTrain(this);
 		System.out.println("Passenger " + passengerNo + 
