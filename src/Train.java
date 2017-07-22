@@ -25,10 +25,8 @@ public class Train extends Thread {
 	
 	public void run()
 	{
-		while(true){
+		while(true)
 			currentStation.loadTrain(this);
-			currentStation.departTrain(this);
-		}
 	}
 	
 	/*--------------------------------------
@@ -52,8 +50,6 @@ public class Train extends Thread {
 	}
 	
 	public void passengerRidesTrain(Passenger p){
-		System.out.println("Called Train.passengerRidesTrain()");
-		
 		try {
 			currentStation.getPassengersWaiting().remove(p);
 			passengersOnTrain.add(p);
@@ -64,21 +60,10 @@ public class Train extends Thread {
 	}
 	
 	public void passengerDepartsFromTrain(Passenger p) {
-		System.out.println("Called Train.passengerDepartsFromTrain()");
-		
 		try {
 			passengersOnTrain.remove(p);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public boolean passengerWantsToDepart() {
-		for (int x = 0; x < passengersOnTrain.size(); x++) {
-			if (passengersOnTrain.get(x).isDeparting())
-				return true;
-		}
-		
-		return false;
 	}
 }
